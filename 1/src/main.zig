@@ -49,12 +49,26 @@ pub fn parse(input: []const u8) ![]Rotation {
     return rotations.toOwnedSlice(alloc);
 }
 
-pub fn problemOne(rotations: []Rotation) usize {
+pub fn problemOne(rotations: []Rotation) isize {
     var dial = Dial{};
-    var res: usize = 0;
+    var res: isize = 0;
 
     for (rotations) |rotation| {
         _ = dial.rotate(&rotation);
+        if (dial.position == 0) {
+            res += 1;
+        }
+    }
+
+    return res;
+}
+
+pub fn problemTwo(rotations: []Rotation) isize {
+    var dial = Dial{};
+    var res: isize = 0;
+
+    for (rotations) |rotation| {
+        res += dial.rotate(&rotation);
         if (dial.position == 0) {
             res += 1;
         }
@@ -83,9 +97,11 @@ pub fn main() !void {
     if (read_bytes != size) return error.UnexpectedEndOfFile;
 
     const rotations = try parse(buf);
-    const res = problemOne(rotations);
+    const res_problem_1 = problemOne(rotations);
+    const res_problem_2 = problemTwo(rotations);
 
-    std.debug.print("{d}", .{res});
+    std.debug.print("Problem 1 solution: {d} \n", .{res_problem_1});
+    std.debug.print("Problem 2 solution: {d} \n", .{res_problem_2});
 }
 
 test "case_1" {
@@ -103,6 +119,7 @@ test "case_1" {
             \\L82
         ;
         const res = try parse(input);
-        try std.testing.expectEqual(@as(usize, 3), problemOne(res));
+        try std.testing.expectEqual(@as(isize, 3), problemOne(res));
+        try std.testing.expectEqual(@as(isize, 6), problemTwo(res));
     }
 }
